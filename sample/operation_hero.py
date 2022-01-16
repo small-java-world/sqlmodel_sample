@@ -1,4 +1,3 @@
-from msilib.schema import ListBox
 from typing import List
 from sample.hero import Hero
 from sample.team import Team

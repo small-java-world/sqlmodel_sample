@@ -11,8 +11,6 @@ class _heroConst:
         self.__dict__[name] = value
 
 
-import sys
-
 sys.modules[__name__] = _heroConst()
 
 _heroConst.HERO_NAME_DEADPOND = "Deadpond"
