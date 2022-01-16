@@ -148,22 +148,6 @@ def test_select_all(init_data_fixture):
     logger.debug("test_select_all end")
 
 
-def test_create(init_data_fixture):
-    logger.debug(f"{sys._getframe().f_code.co_name} start")
-
-    hero_1 = Hero(name="Hoge", secret_name="Hoge Hoge")
-    hero_2 = Hero(name="Fuga", secret_name="Fuga Fuga")
-
-    create([hero_1, hero_2])
-
-    result = select_all()
-    output_name(result)
-
-    assert len(result) == 5
-
-    logger.debug(f"{sys._getframe().f_code.co_name} end")
-
-
 def test_update_age_by_name(init_data_fixture):
     logger.debug(f"{sys._getframe().f_code.co_name} start")
 
