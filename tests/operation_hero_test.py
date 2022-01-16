@@ -3,12 +3,10 @@ import sys
 import pytest
 from logging import getLogger, StreamHandler, DEBUG
 from typing import List, Tuple
+import sample.common_const as HeroConst
 
 from sample.operation_hero import (
-    init_data,
-    create,
     select_all,
-    delete_all,
     select_by_name,
     select_by_name_and_secret_name,
     select_by_name_or_secret_name,
@@ -16,6 +14,7 @@ from sample.operation_hero import (
     update_age_by_name,
 )
 from sample.hero import Hero
+from sample.common_function import delete_all, init_data
 
 logger = getLogger(__name__)
 handler = StreamHandler()
@@ -33,17 +32,7 @@ def init_data_fixture():
     init_data()
 
 
-def test_delete_all(init_data_fixture):
-    logger.debug("test_delete_all start")
-
-    result = delete_all()
-
-    assert result == 3
-
-    logger.debug("test_delete_all end")
-
-
-@pytest.fixture(params=[("Deadpond", 1), ("Hoge", 0)])
+@pytest.fixture(params=[(HeroConst.HERO_NAME_DEADPOND, 1), ("Hoge", 0)])
 def test_select_by_name_fixture(request) -> Tuple[str, int]:
     request.getfixturevalue("init_data_fixture")
     return (request.param[0], request.param[1])
@@ -64,9 +53,9 @@ def test_select_by_name(test_select_by_name_fixture):
 
 @pytest.fixture(
     params=[
-        ("Deadpond", "Dive Wilson", 1),
-        ("Deadpond", "Pedro Parqueador", 0),
-        ("Spider-Boy", "Dive Wilson", 0),
+        (HeroConst.HERO_NAME_DEADPOND, HeroConst.HERO_SECRET_NAME_DEADPOND, 1),
+        (HeroConst.HERO_NAME_DEADPOND, HeroConst.HERO_SECRET_NAME_SPIDER_BOY, 0),
+        (HeroConst.HERO_NAME_SPIDER_BOY, HeroConst.HERO_SECRET_NAME_DEADPOND, 0),
     ]
 )
 def test_select_by_name_and_secret_name_fixture(request) -> Tuple[str, str, int]:
@@ -93,11 +82,11 @@ def test_select_by_name_and_secret_name(test_select_by_name_and_secret_name_fixt
 
 @pytest.fixture(
     params=[
-        ("Deadpond", "Dive Wilson", 1),
-        ("Deadpond", "Pedro Parqueador", 2),
-        ("Spider-Boy", "Dive Wilson", 2),
-        ("Spider-Boy", "Hoge Hoge", 1),
-        ("Hoge", "Pedro Parqueador", 1),
+        (HeroConst.HERO_NAME_DEADPOND, HeroConst.HERO_SECRET_NAME_DEADPOND, 1),
+        (HeroConst.HERO_NAME_DEADPOND, HeroConst.HERO_SECRET_NAME_SPIDER_BOY, 2),
+        (HeroConst.HERO_NAME_SPIDER_BOY, HeroConst.HERO_SECRET_NAME_DEADPOND, 2),
+        (HeroConst.HERO_NAME_SPIDER_BOY, "Hoge Hoge", 1),
+        ("Hoge", HeroConst.HERO_SECRET_NAME_SPIDER_BOY, 1),
     ]
 )
 def test_select_by_name_or_secret_name_fixture(request) -> Tuple[str, str, int]:
@@ -117,7 +106,11 @@ def test_select_by_name_or_secret_name(test_select_by_name_or_secret_name_fixtur
     result = select_by_name_or_secret_name(name, secret_name)
     output_name(result)
 
-    assert len(result) == expected_result
+    error_message = (
+        f"name={name} secret_name={secret_name}で検索した結果の要素数の期待値は{expected_result}です。"
+    )
+
+    assert len(result) == expected_result, error_message
 
     logger.debug(f"{sys._getframe().f_code.co_name} start")
 
