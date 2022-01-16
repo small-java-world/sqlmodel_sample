@@ -1,5 +1,4 @@
 from typing import List
-from xmlrpc.client import Boolean
 from sample.hero import Hero
 from sample.team import Team
 import sample.common_const as HeroConst
@@ -19,7 +18,7 @@ logger.addHandler(handler)
 logger.propagate = False
 
 
-def delete_all() -> Boolean:
+def delete_all() -> bool:
     engine = get_engine()
 
     with create_session(engine) as session:
@@ -36,7 +35,7 @@ def delete_all() -> Boolean:
         except (sqlalchemy.exc.OperationalError, BaseException) as error:
             # テーブルが存在しないときにsqlalchemy.exc.OperationalErrorが発生するが問題問題なし
             if type(error) == sqlalchemy.exc.OperationalError:
-                logger.error(f"Exception occurred")
+                logger.error("Exception occurred")
                 return True
 
             trace = traceback.format_exception_only(type(error), error)
@@ -107,18 +106,18 @@ def create_teams(teams: List[Team], engine: Engine):
         session.commit()
 
         for team in teams:
-            # refreshでなくても参照するだけで反映される。アクセスすると同期してくれるっぽい
+            # refreshでなくても参照するだけで反映される。アクセスすると遅延ロードしてくれる
             session.refresh(team)
             logger.debug(f"team.id={team.id}")
 
     logger.debug("create_teams end")
 
 
-def create_heroes(heros: List[Hero], engine: Engine):
-    logger.debug(f"create_heroes start heros size={len(heros)}")
+def create_heroes(heroes: List[Hero], engine: Engine):
+    logger.debug(f"create_heroes start heros size={len(heroes)}")
 
     with create_session(engine) as session:
-        session.add_all(heros)
+        session.add_all(heroes)
         session.commit()
 
     logger.debug("create_heroes end")

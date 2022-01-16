@@ -4,10 +4,6 @@ from sample.team import Team
 from sample.common_function import get_engine, create_session
 
 from sqlmodel import (
-    Field,
-    Session,
-    SQLModel,
-    create_engine,
     select,
     or_,
 )
@@ -72,8 +68,10 @@ def select_by_age_above(age: int) -> List[Hero]:
 
 def update_age_by_name(name: str, age: int) -> List[Hero]:
     engine = get_engine()
+
     with create_session(engine) as session:
         statement = select(Hero).where(Hero.name == name)
+        # 条件にあう先頭のレコードを取得
         hero = session.exec(statement).one()
 
         # heroインスタンスのageを更新してsession.addとsession.commitで更新

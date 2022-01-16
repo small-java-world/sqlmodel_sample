@@ -2,9 +2,7 @@ from multiprocessing.dummy.connection import Listener
 import sys
 import pytest
 from logging import getLogger, StreamHandler, DEBUG
-from typing import List, Tuple
 
-from sample.hero import Hero
 from sample.common_function import delete_all, init_data
 import sample.common_const as HeroConst
 
